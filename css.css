@@ -1,0 +1,34 @@
+/*css stands for Cascading Style Sheets. This is usually used in HTML*/
+/*This code will make the background color of our webpage to be black and text color white */
+body {
+    background-color: #000;  
+    font-family: Arial, sans-serif; 
+}
+
+h1{
+    color:#fff;
+}
+
+#container{
+    width:80%;
+    margin:auto;
+    padding:25px;
+    border:3px solid #777;
+    box-shadow: 0 0 10px rgba(0,0,0,.4);
+    max-width:960px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+li a{
+    text-decoration: none;
+    color:#fff;
+    transition: .3s ease-in-out;
+}
+li a:hover{
+    transform: scale(1.1);
+}
