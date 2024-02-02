@@ -1,0 +1,95 @@
+; This demo will demonstrate a more advanced use of the M68K assembly language.
+; In this demo,  we'll be creating a script that will generate complex numbers and calculate them in a more expanded way.
+; You should know how HEX works,  and have an assembler that supports it (like m68k-elf-as).
+
+; --------------------------------------------------------------------------------------------------------------------------
+
+ORG  $100                   ; Start at address 256 (decimal)
+
+; First, we'll write a simple subroutine to print out an ASCII character on the screen.
+PRINT_CHAR:                ; Subroutine label
+    MOVEA.L D0, A0           ; Load the value in D0 into A0 - this is our parameter for the function
+    BSR PRINT_HEX            ; Call the PRINT_HEX subroutine to display Hexadecimal version of A0   
+    LEA A0, CR               ; Point A0 to the string "CR" which contains the carriage return character
+    SYSCALL #PUTS             ; Print out the contents of A0 (which is "CR")
+    RTS                      ; Return from the subroutine
+    
+PRINT_HEX:                 ; Another subroutine label
+    PSHD D0                  ; Save the current value of D0 onto the stack so it can be preserved
+    AND.B #$F0, D0            ; Isolate the high nibble of D0
+    LSL.B #4, D0              ; Shift the high nibble down by 4 bits
+    ADD.B #'0', D0            ; Add '0' to the hex digit if it's less than 10
+    CMP.B #'9'+1, D0          ; Compare with '9'+1 (':'-1). If greater or equal, add 'A'-10
+    BGE.B +                  ; If D0 was >= 10, skip next line
+    ADD.B #('A'-10), D0       ; Otherwise, add 'A' to the hex digit
++   MOVE.B D0, -(SP)         ; Store the hex digit on the stack
+    PULD D0                  ; Restore the original value of D0 from the stack
+    RTS                      ; Return from the subroutine
+    
+CR DB 13, 0                 ; The carriage return/newline pair
+
+; Now that we have our basic printing functions, let's use them to print out some text!
+LEA A0, STRING              ; Point A0 to the string we want to print
+JSR PRINT_CHAR              ; Call PRINT_CHAR to print out each character one by one
+
+; And finally, let's exit the program gracefully using syscall number 1 (SYS_exit)
+MOVEQ #0, D0                 ; Set D0 to zero as per the syscall documentation
+SYSCALL #1                   ; Make the syscall
+
+STRING DCB "Hello World!", 0  ; Our null terminated string 
+
+;---------------------------------------------------------------------------------------------------------------------------
+
+; Breaking it down:
+
+;  In ORG $100, we set the origin point of our code to decimal 256. This means that when we refer to labels like PRINT_CHAR and STRING.
+
+;  PRINT_CHAR:
+;   In the first part of the code, we define two labels: `PRINT_CHAR` and `PRINT_HEX`. These are used to mark the start of two separate subroutines
+;   This subroutine takes one parameter (the character to print) and prints it out on the screen. 
+;   It does this by moving the parameter into A0, calling PRINT_HEX to get the hex representation of A0, then using SYS_puts to print it out.
+;   It uses two other subroutines called PRINT_HEX and LEA to achieve this task.
+
+;  PRINT_HEX:
+;   In this subroutine, we isolate the high nibble of the input character and convert it to its ASCII representation. 
+;   This subroutine converts a binary value into its hexadecimal representation. 
+;   It takes one parameter (the binary value to convert) and returns the ASCII value of the corresponding hex digit.
+
+;  Outside the subroutines:
+;   We will use the carriage return/newline pair CR in order to move the cursor to the start of the next line after
+;   We start off by loading the address of the string we want to print into register A0 using LEA.
+;   Then, we call PRINT_CHAR which will in turn call PRINT_HEX for every character in the string.
+;   After all characters are printed, the program exits using SYS_exit with system call number 1.
+
+;-----------------------------------------------------------------------------------------------------------------------------
+
+; Code without comments:
+
+PRINT_CHAR:                
+    MOVEA.L D0, A0           
+    BSR PRINT_HEX            
+    LEA A0, CR               
+    SYSCALL #PUTS             
+    RTS                      
+    
+PRINT_HEX:                 
+    PSHD D0                  
+    AND.B #$F0, D0            
+    LSL.B #4, D0              
+    ADD.B #'0', D0            
+    CMP.B #'9'+1, D0
+    BGE.B +                  
+    ADD.B #('A'-10), D0       
++   MOVE.B D0, -(SP)         
+    PULD D0                  
+    RTS                      
+    
+CR DB 13, 0                 
+
+LEA A0, STRING              
+JSR PRINT_CHAR              
+
+MOVEQ #0, D0                 
+SYSCALL #1                   
+
+STRING DCB "Hello World!", 0  
