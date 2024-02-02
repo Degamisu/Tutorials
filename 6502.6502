@@ -1,0 +1,56 @@
+; This is an example of the 6502 assembly language.
+; The 6502 assembly language is commonly used in the Nintendo Entertainment System.
+; The 6502 CPU was made in the mid 1980s.
+
+; This example is a simple "hello world" code.
+
+; Hello, World! for 6502
+
+; Memory map:
+; $0000 - $00FF: Zero page
+; $0100 - $01FF: Stack
+; $0200 - $07FF: Program
+; $0800 - $0BFF: Screen memory
+; $0C00 - $0FFF: Color memory
+
+; Program start
+*=$0200
+
+; Initialize variables
+start:
+    lda #$00
+    sta $00
+    sta $01
+
+; Print "Hello, World!" to screen
+print:
+    lda message,x
+    beq done
+    sta $0400,x
+    inx
+    jmp print
+
+done:
+    ; Halt
+    jmp done
+
+; Data
+message:
+    .text "Hello, World!"
+    .byte 0
+
+; -------------------------------------------------------------
+
+; This seems like a LOT. Lets break it down.
+; First we initialize the zero-page ($00-$0f) and stack ($10-$1b).
+; We then set up our program counter (PC) at $0200. The PC is an important register that tells the CPU where to look for instructions.
+; Then we have our program code which is stored at $0200-$07ff. The program starts with 'sta' (store accumulator), writing the value of x into $04
+; We then jump to our main routine (labelled 'start') which is located at $0200.
+; From there, we enter a loop that prints each character of the string 'message' to the screen starting at location $0400.
+; The program starts by setting up some registers with values of $00 and $01. These are not used yet but will later on store addresses or other information.
+; In this routine we set up some registers with initial values of $00 and $01. These are used as counters for our string printing loop.
+; In this routine, we copy the string "Hello, World!" into RAM starting at $0400.
+; The X register is used as an index for copying the characters one by one. When the end of the string is reached, the Z flag will be set and we'll branch to ' The X register is used as an index for writing to that location. When the source byte is zero
+; To print the message, each character is stored one after another in that location.
+; When there are no more characters left to store ($90), we branch to label 'done'.
+; At 'done', nothing happens because we're halted by jmp done.
