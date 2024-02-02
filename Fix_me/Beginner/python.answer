@@ -1,7 +1,0 @@
-LINE 14
-
--- print("The area of the rectangle is {area} square units.")
-
-EXPECT:
-
--- print(f"The area of the rectangle is {area} square units.")
