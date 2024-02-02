@@ -47,7 +47,8 @@ int main() {
     // We use an index operator to access the last row of the matrix and add a value to it
     // This way we append a new column to the right side of the matrix
     for (int i=0; i < myMatrix.size(); i++) {
-        myMatrix.back().push_back((i % 2 == 0 ? i/2 : -(i/2 + 1)));
+        int newColumnValue = (myMatrix.back().size() % 2 == 0 ? myMatrix.back().size()/2 : -(myMatrix.back().size()/2 + 1));
+        myMatrix.back().push_back(newColumnValue);
     }
 
     // Print out the newly added column
@@ -60,4 +61,4 @@ int main() {
     }
 
     return 0;
-}
+    }
